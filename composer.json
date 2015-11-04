@@ -4,5 +4,11 @@
     },
     "require-dev": {
         "heroku/heroku-buildpack-php": "dev-master"
+    },
+    "extra": {
+       "heroku": {
+           "document-root": "v1",
+            "index-document": "index.php"
+        }
     }
 }
