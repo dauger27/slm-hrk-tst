@@ -35,9 +35,15 @@ $app->post('/hello', function () use ($app) {
 });
 
 
-$app->map('/foo', function() use ($app, $db) {
+$app->map('/players', function() use ($app, $db) {
     try {
-        echo var_dump($db->get_players());
+        $players = $db->get_players();
+        foreach ($players as $player) {
+            echo "ID:\t\t\t".$player->player_id."\n";
+            echo "Email:\t\t".$player->email_address."\n";
+            echo "Secret:\t\t".$player->secret."\n";
+            echo "Username:\t".$player->username."\n\n";
+        }
     } catch (DBException $e) {
         http_response_code(500);
         die($e->getMessage());

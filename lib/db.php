@@ -13,18 +13,18 @@ class DB {
     } // __construct
 
     public function __destruct() {
-        mysql_close($this->conn);
+        mysqli_close($this->conn);
         $this->conn = NULL;
     } // __destruct
 
     private function dbconnect() {
-        $conn = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-
-        if ($conn === false) {
+        $conn = mysqli_init();
+        if (mysqli_real_connect($conn, DB_HOST, DB_USER, DB_PASSWORD) === false) {
+            mysqli_close($conn);
             return 'Could not connect to MySQL server';
         } else {
-            if (mysql_select_db(DB_DB,$conn) === false) {
-                mysql_close($conn);
+            if (mysqli_select_db($conn, DB_DB) === false) {
+                mysqli_close($conn);
                 return 'Could not connect to MySQL database';
             } else {
                 return $conn;
@@ -33,8 +33,11 @@ class DB {
     } // dbconnect
 
     private function query($sql) {
-        $res = mysql_query($sql);
-
+//return $this->conn;
+//return $sql;
+        $res = mysqli_query($this->conn, $sql);
+//return $res;
+//return $this->conn;
         if ($res) {
             if (strpos($sql,'SELECT') === false) {
                 return true;
@@ -49,7 +52,7 @@ class DB {
 
         $results = array();
 
-        while ($row = mysql_fetch_array($res)) {
+        while ($row = mysqli_fetch_array($res)) {
             $result = new DBQueryResult();
         
             foreach ($row as $k=>$v) {

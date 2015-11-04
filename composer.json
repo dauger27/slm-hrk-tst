@@ -6,7 +6,7 @@
         "heroku/heroku-buildpack-php": "dev-master"
     },
     "extra": {
-       "heroku": {
+        "heroku": {
            "document-root": "v1",
             "index-document": "index.php"
         }
