@@ -1,0 +1,11 @@
+.game a {
+  color: aqua;
+}
+
+.login a {
+  border-bottom: solid 2px black;
+}
+
+.player-dash a {
+  background: red;
+}
