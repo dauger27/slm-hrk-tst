@@ -20,8 +20,11 @@ $app->get('/hello/:name', function ($name) {
     echo "Hello, $name";
 });
 */
+$app->get('/', function () {
+    include 'index.html';
+});
 $app->get('/hello/:name', function ($name) {
-    echo "Hello, $name";
+    echo json_encode("{'name':$name}");
 });
 
 $app->post('/hello', function () use ($app) {    
@@ -38,12 +41,12 @@ $app->post('/hello', function () use ($app) {
 $app->map('/players', function() use ($app, $db) {
     try {
         $players = $db->get_players();
+        $outArray = array();
         foreach ($players as $player) {
-            echo "ID:\t\t\t".$player->player_id."\n";
-            echo "Email:\t\t".$player->email_address."\n";
-            echo "Secret:\t\t".$player->secret."\n";
-            echo "Username:\t".$player->username."\n\n";
+            $arr = array('ID'=>$player->player_id,'Email'=>$player->email_address,'Secret'=>$player->secret,'Username'=>$player->username);
+            array_push($outArray,$arr);
         }
+        echo json_encode($outArray);
     } catch (DBException $e) {
         http_response_code(500);
         die($e->getMessage());
@@ -70,7 +73,7 @@ $app->delete('/books/:id', function ($id) {
 $app->get('/hello/:name+', function ($name) {
     // Do something
 });
-//When you invoke this example application with a resource URI “/hello/Josh/T/Lockhart”, the route callback’s $name argument will be equal to array('Josh', 'T', Lockhart').
+//When you invoke this example application with a resource URI √í/hello/Josh/T/Lockhart√ì, the route callback√ïs $name argument will be equal to array('Josh', 'T', Lockhart').
 
 $authenticateForRole = function ( $role = 'member' ) {
     return function () use ( $role ) {

@@ -1,0 +1,29 @@
+{
+  "name": "www",
+  "version": "0.1.0",
+  "description": "an implementation of Evilopoly rules with php and angularjs",
+  "main": "Gruntfile.js",
+  "dependencies": {
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt": "^0.4.5",
+    "grunt-contrib-less": "^1.0.1",
+    "grunt-contrib-watch": "^0.6.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JDragovich/slm-hrk-tst.git"
+  },
+  "keywords": [
+    "Evilopoly"
+  ],
+  "author": "Dan Auger, Steve Schiavoni, Stuart Hollis, Joe Dragovich",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JDragovich/slm-hrk-tst/issues"
+  },
+  "homepage": "https://github.com/JDragovich/slm-hrk-tst#readme"
+}
