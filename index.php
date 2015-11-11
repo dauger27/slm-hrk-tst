@@ -6,54 +6,50 @@ require_once('lib/config.php');
 //Load Slim Application
 $app = new \Slim\Slim;
 
-//Load DB
+//Load Models
 try {
-    $db = new DB();
+    $player = Player::getInstance();
+    $game = Game::getInstance();
 } catch (DBException $e) {
-    http_response_code(500);
+    http_response_code($e->getCode());
     die($e->getMessage());
 }
 
-/*
-}
-$app->get('/hello/:name', function ($name) {
-    echo "Hello, $name";
-});
-*/
+//Create route/controller functionality
 $app->get('/', function () {
-    include 'index.html';
-});
-$app->get('/hello/:name', function ($name) {
-    echo json_encode("{'name':$name}");
+    header("Location: /login");
+    exit;    
 });
 
-$app->post('/hello', function () use ($app) {    
-    //POST variable
-    $name = $app->request->post('name');
-    if (is_nuLL($name)) {
-        echo "Hello, world";
+$app->map('/players', function() use ($player) {
+    $players = $player->get_players();
+    if ($players) {
+        echo json_encode($players);
     } else {
-        echo "Hello, $name";
-    }
-});
-
-
-$app->map('/players', function() use ($app, $db) {
-    try {
-        $players = $db->get_players();
-        $outArray = array();
-        foreach ($players as $player) {
-            $arr = array('ID'=>$player->player_id,'Email'=>$player->email_address,'Secret'=>$player->secret,'Username'=>$player->username);
-            array_push($outArray,$arr);
-        }
-        echo json_encode($outArray);
-    } catch (DBException $e) {
-        http_response_code(500);
-        die($e->getMessage());
+        echo $player->last_error();
     }
 })->via('GET', 'POST');
 
-/*
+$app->get('/login', function() {
+    include 'index.html'; // TODO: use slim view functionality?
+});
+
+$app->post('/login', function() use ($app, $player) {
+    // Validate POST variables
+    if ($app->request->post('email_address') === NULL || $app->request->post('password') === NULL) {
+        echo "Invalid email/password";
+    } else {
+        $login = $player->login($app->request->post('email_address'), $app->request->post('password'));
+        if ($login) {
+            //TODO: Store login information in session/cookie?
+
+        } else {
+            echo $player->last_error();
+        }
+    }
+});
+
+/* NOTES:
 $app->get('/books/:id', function ($id) {
     //Show book identified by $id
 });
@@ -121,5 +117,7 @@ GET    /api/library/books/:id
 PUT    /api/library/books/:id
 DELETE /api/library/books/:id
 */
-$app->run();
 
+//Run application
+$app->run();
+?>
