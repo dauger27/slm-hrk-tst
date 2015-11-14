@@ -72,6 +72,14 @@ class DB {
         $sql = 'SELECT * FROM player';
         return $this->query($sql);
     } // get_players
+    
+    //Check password
+    public function get_auth($name, $password) {
+        $escName = mysqli_real_escape_string($this->conn, $name);
+        $escPassword = mysqli_real_escape_string($this->conn, $password); // hashing should occur here eventually
+        $sql = "SELECT * FROM player WHERE username='$escName' AND secret='$escPassword'";
+        return $this->query($sql);
+    } // get_auth
 } // DB
 
 //DBQueryResult (created by DB class)
