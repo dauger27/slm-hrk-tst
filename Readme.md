@@ -34,6 +34,11 @@ running `grunt watch` will set grunt to automatically compile the files as soon 
 *header:* header `"stuff"` with the pattern username:password.
 *returns:* authtoken
 
+### `/createacct`
+*header* none required.
+*post body* json `{"email_address":string,"password":string,"username":string}`
+*returns* void
+
 ### `/api/v1/players`
 *header:* header `"x-auth-token"` with authorization token.
 *returns:* json player list
