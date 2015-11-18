@@ -66,22 +66,6 @@ class DB {
 	return str_replace('{%B%}', '?', $sql);
     } // compile_binds
 
-    //****PUBLIC FUNCTIONS FOR DB CLASS****//
-    
-    //Return players
-    public function get_players() {
-        $sql = 'SELECT * FROM player';
-        return $this->query($sql);
-    } // get_players
-    
-    //Check password
-    public function get_auth($name, $password) {
-        $escName = mysqli_real_escape_string($this->conn, $name);
-        $escPassword = mysqli_real_escape_string($this->conn, $password); // hashing should occur here eventually
-        $sql = "SELECT * FROM player WHERE username='$escName' AND secret='$escPassword'";
-        return $this->query($sql);
-    } // get_auth
-
     public function query($sql) {
 	//if we have more than one argument ($sql)
 	if (func_num_args() > 1) {

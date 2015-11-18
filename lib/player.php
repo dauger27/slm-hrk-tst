@@ -53,6 +53,22 @@ class Player {
 
 	return $result[0];
     }
+    
+    // Create account
+    public function create_account($email, $name, $password) {
+	try {
+	    $result = $this->db->query("INSERT INTO player (email_address,secret,username) VALUES (?,?,?)", $email, $name, $password); // TODO: passwords should eventually be hashed
+	    if (count($result) == 0) {
+		$this->error = 'Account cannot be created';
+		return FALSE;
+	    }
+	} catch (DBException $e) {
+	    $this->error = $e->getMessage();
+	    return FALSE;
+	}
+
+	return $result[0];
+    }
 
     // Get the last error that occurred
     public function last_error() {

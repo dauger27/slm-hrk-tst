@@ -95,6 +95,26 @@ $app->post('/login', function() use ($app, $player) {
     }
 });
 
+$app->post('/createacct', function() use ($app, $player) {
+    $postData = json_decode($app->request->getBody(), true);
+    
+    // Validate POST variables
+    if ($postData['email_address'] === NULL || $postData['password'] === NULL || $postData['username'] === NULL) {
+        echo "Missing information";
+    } else {
+        
+        $login = $player->create_account($postData['email_address'], $postData['password'],$postData['username']);
+        
+        if ($login) {
+            echo "account created";
+
+        } else {
+            echo $player->last_error();
+        }
+        
+    }
+});
+
 /* NOTES:
 $app->get('/books/:id', function ($id) {
     //Show book identified by $id
