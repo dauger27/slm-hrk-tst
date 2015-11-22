@@ -1,5 +1,5 @@
 //we'll put the router here in the future.
-angular.module("main",['ngRoute']).config(['$routeProvider',
+angular.module("main",['ngRoute','ngSanitize']).config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
       when('/login', {

@@ -1,6 +1,7 @@
 {
     "require": {
-        "slim/slim": "2.*"
+        "slim/slim": "2.*",
+        "firebase/php-jwt": "^3.0"
     },
     "require-dev": {
         "heroku/heroku-buildpack-php": "dev-master"

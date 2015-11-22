@@ -61,6 +61,7 @@ class DB {
 	    $sql = substr($sql, 0, $next_bind_pos).$val.substr($sql, $next_bind_pos + 1);
 	}
 
+
 	// Restore placeholders
 	return str_replace('{%B%}', '?', $sql);
     } // compile_binds

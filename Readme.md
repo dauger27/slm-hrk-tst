@@ -1,7 +1,7 @@
-## Evilopoly
+# Evilopoly
 an implementation of the Evilopoly rules using Slim, Angular and Bootstrap
 
-### Setting up the front-end dev environment...
+## Setting up the front-end dev environment...
 This should work for both mac and windows... so no complaining. This presumes that you have git installed on your manchine and that you have pulled down the repo.
 
 #### Step 1: Install node
@@ -27,3 +27,26 @@ running `grunt less` will just concatenate all of the less files in /main into /
 
 #### grunt watch
 running `grunt watch` will set grunt to automatically compile the files as soon as you save a change in them. good for rapid development. 
+
+## API
+
+### `/login`
+*header:* header `"stuff"` with the pattern username:password.
+*returns:* authtoken
+
+### `/createacct`
+*header* none required.
+*post body* json `{"email_address":string,"password":string,"username":string}`
+*returns* void
+
+### `/api/v1/players`
+*header:* header `"x-auth-token"` with authorization token.
+*returns:* json player list
+
+### `/api/v1/hello/:name`
+*header:* header `"x-auth-token"` with authorization token.
+*params:* `name`(string) name to be returned
+*returns:* json with `{"name":}`
+
+## Auth token format
+`{"username":"username",token":"base64 encoded string"}`

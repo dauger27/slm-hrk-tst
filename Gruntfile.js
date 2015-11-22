@@ -24,14 +24,16 @@ module.exports = function(grunt) {
         }
     },  
     watch: {
-      files: ['<%= concat.app.src %>','<%= less.dev.files %>'],
-      tasks: ['concat','less']
+      files: ['<%= concat.app.src %>'],
+      tasks: ['concat']
     }
   });
+    
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-less');
 
-  grunt.registerTask('default', ['concat','watch','less']);
+  grunt.registerTask('default', ['concat','less']);
+  grunt.registerTask('stuff', ['watch']);
 
 };
