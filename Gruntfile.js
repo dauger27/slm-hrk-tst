@@ -24,8 +24,8 @@ module.exports = function(grunt) {
         }
     },  
     watch: {
-      files: ['<%= concat.app.src %>'],
-      tasks: ['concat']
+      files: ['<%= concat.app.src %>','<%= less.dev.files["dist/app.css"] %>'],
+      tasks: ['concat','less']
     }
   });
     

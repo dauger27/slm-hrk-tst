@@ -41,7 +41,7 @@ $authenticate = function(\Slim\Route $route) use ($app){
 };
 
 //protected route group
-$app->group('/api/v1', $authenticate, function () use ($app, $player) {
+$app->group('/api/v1', $authenticate, function () use ($app, $player, $game) {
     
    $app->get('/hello/:name', function ($name) {
         echo json_encode("{'name':$name}");
@@ -55,6 +55,30 @@ $app->group('/api/v1', $authenticate, function () use ($app, $player) {
             echo $player->last_error();
         }
     })->via('GET', 'POST');
+    
+    $app->get('/getgame/:id', function () use ($app, $game) {
+
+    })->name("get the current state of a game by id");
+    
+    $app->post('/creategame', function() use ($app, $game) {
+        $postData = json_decode($app->request->getBody(), true);
+
+        // Validate POST variables
+        if ($postData['email_address'] === NULL || $postData['password'] === NULL || $postData['username'] === NULL) {
+            echo "Missing information";
+        } else {
+
+            $login = $player->create_account($postData['email_address'], $postData['password'],$postData['username']);
+
+            if ($login) {
+                echo "account created";
+
+            } else {
+                echo $player->last_error();
+            }
+
+        }
+    });
     
 });
 
@@ -122,7 +146,7 @@ $app->post('/login', function() use ($app, $player) {
         }
         
     }
-})->name('Authenticates username and password and returns a json web token');
+})->name('Authenticates username and password and returns a json web token')->stuff="junk";
 
 $app->post('/createacct', function() use ($app, $player) {
     $postData = json_decode($app->request->getBody(), true);
