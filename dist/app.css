@@ -1,3 +1,10 @@
+.api .api-entry {
+  margin-bottom: 50px;
+}
+.api .api-entry .section {
+  margin-bottom: 20px;
+}
+
 .game a {
   color: aqua;
 }

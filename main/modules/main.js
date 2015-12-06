@@ -14,6 +14,10 @@ angular.module("main",['ngRoute','ngSanitize']).config(['$routeProvider',
         templateUrl: 'main/partials/playerDash/playerDash.html',
         controller: 'DashCtrl'
       }).
+      when('/apiDocs', {
+        templateUrl: 'main/partials/apiDocs/api.html',
+        controller: 'apiCtrl'
+      }).
       otherwise({
         redirectTo: '/login'
       });

@@ -1,4 +1,3 @@
-
 //we'll put the router here in the future.
 angular.module("main",['ngRoute','ngSanitize']).config(['$routeProvider',
   function($routeProvider) {
@@ -15,10 +14,44 @@ angular.module("main",['ngRoute','ngSanitize']).config(['$routeProvider',
         templateUrl: 'main/partials/playerDash/playerDash.html',
         controller: 'DashCtrl'
       }).
+      when('/apiDocs', {
+        templateUrl: 'main/partials/apiDocs/api.html',
+        controller: 'apiCtrl'
+      }).
       otherwise({
         redirectTo: '/login'
       });
   }]);
+
+angular.module("main").directive('scrollOnClick', function() {
+  return {
+    restrict: 'A',
+    link: function(scope, $elm, attrs) {
+      var idToScroll = attrs.scrollto;
+      $elm.on('click', function() {
+        var $target;
+        if (idToScroll) {
+          $target = $(idToScroll);
+        } else {
+          $target = $elm;
+        }
+          console.log($target);
+        $("body").animate({scrollTop: $target.offset().top}, "slow");
+      });
+    }
+  }
+});
+angular.module("main").controller("apiCtrl", ["$scope","$http","$sce","$sanitize",function($scope,$http,$sce,$sanitize){
+    $scope.api = {};
+    
+    $http.get("/apiDocs").then(function(data){
+        console.log(data.data);
+        $scope.api = data.data;
+    },function(error){
+        console.log(error.data)
+        $scope.data = $sce.trustAsHtml(error.data); 
+    });
+}]);
 angular.module("main").controller("GameCtrl", ["$scope","$location","$http",function($scope,$location,$http){
     
     if(!localStorage.auth){

@@ -45,7 +45,7 @@ $app->group('/api/v1', $authenticate, function () use ($app, $player) {
     
    $app->get('/hello/:name', function ($name) {
         echo json_encode("{'name':$name}");
-    });
+    })->name("route with params");
     
     $app->map('/players', function() use ($player) {
         $players = $player->get_players();
@@ -60,6 +60,35 @@ $app->group('/api/v1', $authenticate, function () use ($app, $player) {
 
 $app->get('/', function () {
     include 'index.html';
+});
+
+$app->get('/apiDocs', function () use ($app) {
+    class RouteDumper extends \Slim\Router {
+        public static function getAllRoutes() {
+            $slim = \Slim\Slim::getInstance();
+            return $slim->router->routes;
+        }
+    }
+    
+    class ParamNames extends \Slim\Route {
+        public static function getParamNames($index){
+            return $index->paramNames;
+        }
+    }
+    
+    $routes = RouteDumper::getAllRoutes();
+    $array = Array();
+    for($i = 0; $i < count($routes); $i++){
+
+        $element = Array("pattern"=>$routes[$i]->getPattern(),
+                        "params"=>ParamNames::getParamNames($routes[$i]),
+                        "name"=>$routes[$i]->getName(),
+                        "callable"=>$routes[$i]->getCallable(),
+                        "middleware"=>$routes[$i]->getMiddleware(),
+                        "methods"=>$routes[$i]->getHttpMethods());
+        array_push($array,$element);
+    }
+    echo json_encode($array);
 });
 
 $app->post('/login', function() use ($app, $player) {
@@ -93,7 +122,7 @@ $app->post('/login', function() use ($app, $player) {
         }
         
     }
-});
+})->name('Authenticates username and password and returns a json web token');
 
 $app->post('/createacct', function() use ($app, $player) {
     $postData = json_decode($app->request->getBody(), true);
