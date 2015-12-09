@@ -52,7 +52,39 @@ class Game {
 	}
 
 	return $result;
-    } // get_games
+    } // get_all_games
+    
+    //Create game
+    public function create_game($name) {
+	try {
+	    $result = $this->db->query("INSERT INTO game (name) VALUES (?)", $name);
+	    if (count($result) == 0) {
+		$this->error = 'Cannot create game';
+		return FALSE;
+	    }
+	} catch (DBException $e) {
+	    $this->error = $e->getMessage();
+	    return FALSE;
+	}
+
+	return $result;
+    } // create_games
+    
+    //add players to game
+    public function add_players($gameID, $playerID) {
+	try {
+	    $result = $this->db->query("INSERT INTO player_game (FK_game_id,FK_player_id) VALUES (?,?)", $gameID, $playerID);
+	    if (count($result) == 0) {
+		$this->error = 'Cannot create game';
+		return FALSE;
+	    }
+	} catch (DBException $e) {
+	    $this->error = $e->getMessage();
+	    return FALSE;
+	}
+
+	return $result;
+    } // add_players
 
     // Get the last error that occurred
     public function last_error() {

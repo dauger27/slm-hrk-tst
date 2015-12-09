@@ -60,21 +60,27 @@ $app->group('/api/v1', $authenticate, function () use ($app, $player, $game) {
 
     })->name("get the current state of a game by id");
     
+    $app->get('/getgames', function () use ($app, $game) {
+        $header = json_decode($app->request->headers->get('x-auth-token'));
+        
+        $games = $game->get_all_games();
+        echo json_encode($games);
+    })->name("get the current state of a game by id");
+    
     $app->post('/creategame', function() use ($app, $game) {
         $postData = json_decode($app->request->getBody(), true);
 
         // Validate POST variables
-        if ($postData['email_address'] === NULL || $postData['password'] === NULL || $postData['username'] === NULL) {
+        if ($postData['name'] === NULL) {
             echo "Missing information";
         } else {
 
-            $login = $player->create_account($postData['email_address'], $postData['password'],$postData['username']);
+            $newGame = $game->create_game($postData['name']);
 
-            if ($login) {
-                echo "account created";
-
+            if ($newGame) {
+                echo $newGame;
             } else {
-                echo $player->last_error();
+                echo $game->last_error();
             }
 
         }
@@ -116,28 +122,31 @@ $app->get('/apiDocs', function () use ($app) {
 });
 
 $app->post('/login', function() use ($app, $player) {
-    $postData = json_decode($app->request->getBody(), true);
+    $header = $app->request->headers->get('login');
+    $decoded = base64_decode($header);
+    $authArray = explode(":",$decoded);
 
     // Validate POST variables
-    if ($postData['email_address'] === NULL || $postData['password'] === NULL) {
+    if ($authArray[0] === NULL || $authArray[1] === NULL) {
         echo "Invalid email/password";
     } else {
         
-        $login = $player->login($postData['email_address'], $postData['password']);
+        $login = $player->login($authArray[0], $authArray[1]);
         
         if ($login) {
             $key = "yourMom1969";
             $token = array(
                 'username'=>$app->request->post('email_address'),
                 'issued'=> time(),
-                'expires'=> time() + 60
+                'expires'=> time() + 600
             );
             $jwt = JWT::encode($token, $key);
 
             //now put the encoded token into another public json object
             $pubToken = array(
                 'username'=>$app->request->post('email_address'),
-                'token'=>$jwt
+                'token'=>$jwt,
+                'player_id'=>$login['player_id']
             );
             echo json_encode($pubToken);
 

@@ -1,12 +1,12 @@
 //we'll put the router here in the future.
-angular.module("main",['ngRoute','ngSanitize']).config(['$routeProvider',
+angular.module("main",['ngRoute','ngSanitize','ab-base64']).config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
       when('/login', {
         templateUrl: 'main/partials/login/login.html',
         controller: 'LoginCtrl'
       }).
-      when('/games/:game', {
+      when('/getgames', {
         templateUrl: 'main/partials/game/game.html',
         controller: 'GameCtrl'
       }).
@@ -52,28 +52,39 @@ angular.module("main").controller("apiCtrl", ["$scope","$http","$sce","$sanitize
         $scope.data = $sce.trustAsHtml(error.data); 
     });
 }]);
-angular.module("main").controller("GameCtrl", ["$scope","$location","$http",function($scope,$location,$http){
-    
-    if(!localStorage.auth){
+angular.module("main").controller("GameCtrl", ["$scope","$location","$http","$sce","$sanitize",function($scope,$location,$http,$sce,$sanitize){
+    if(!localStorage.authToken){
         console.log("No Auth");
         $location.path('/login')
     }
+    var authToken = localStorage.getItem("authToken");
     
     //Here is an example of an http request that hits an API endpoint...
-    $http.get("/players").then(function(data){
+    $http.get("/api/v1/getgames",{headers:{"x-auth-token":authToken}}).then(function(data){
         console.log(data.data);
         $scope.players = data.data;
     },function(error){
-        console.log(error);
+        console.log(error.data)
+        $scope.error = $sce.trustAsHtml(error.data);
     });
+    $scope.createGame = function(){
+        //Here is an example of an http request that hits an API endpoint...
+        $http.post("/api/v1/creategame",{name:$scope.name},{headers:{"x-auth-token":authToken}}).then(function(data){
+            console.log(data.data);
+            $scope.players = data.data;
+        },function(error){
+            console.log(error.data)
+            $scope.error = $sce.trustAsHtml(error.data);
+        });
+    };
 }]);
-angular.module("main").controller("LoginCtrl", ["$scope","$http","$sce","$sanitize",function($scope,$http,$sce,$sanitize){
+angular.module("main").controller("LoginCtrl", ["$scope","$http","$sce","$sanitize","base64",function($scope,$http,$sce,$sanitize,base64){
     $scope.userName = "";
     $scope.password = "";
     $scope.jsonData = "";
     
     $scope.setAuth = function(val){
-        $http.post("/login",{"email_address":$scope.userName,"password":$scope.password}).then(function(data){
+        $http.post("/login",null,{headers:{"login":base64.encode($scope.userName+":"+$scope.password)}}).then(function(data){//todo start here
             
             //get the token and put it in local sotrage
             localStorage.setItem("authToken", JSON.stringify(data.data));
