@@ -41,11 +41,11 @@ $authenticate = function(\Slim\Route $route) use ($app){
 };
 
 //protected route group
-$app->group('/api/v1', $authenticate, function () use ($app, $player) {
+$app->group('/api/v1', $authenticate, function () use ($app, $player, $game) {
     
    $app->get('/hello/:name', function ($name) {
         echo json_encode("{'name':$name}");
-    });
+    })->name("route with params");
     
     $app->map('/players', function() use ($player) {
         $players = $player->get_players();
@@ -56,35 +56,97 @@ $app->group('/api/v1', $authenticate, function () use ($app, $player) {
         }
     })->via('GET', 'POST');
     
+    $app->get('/getgame/:id', function () use ($app, $game) {
+
+    })->name("get the current state of a game by id");
+    
+    $app->get('/getgames', function () use ($app, $game) {
+        $header = json_decode($app->request->headers->get('x-auth-token'));
+        
+        $games = $game->get_all_games();
+        echo json_encode($games);
+    })->name("get the current state of a game by id");
+    
+    $app->post('/creategame', function() use ($app, $game) {
+        $postData = json_decode($app->request->getBody(), true);
+
+        // Validate POST variables
+        if ($postData['name'] === NULL) {
+            echo "Missing information";
+        } else {
+
+            $newGame = $game->create_game($postData['name']);
+
+            if ($newGame) {
+                echo $newGame;
+            } else {
+                echo $game->last_error();
+            }
+
+        }
+    });
+    
 });
 
 $app->get('/', function () {
     include 'index.html';
 });
 
+$app->get('/apiDocs', function () use ($app) {
+    class RouteDumper extends \Slim\Router {
+        public static function getAllRoutes() {
+            $slim = \Slim\Slim::getInstance();
+            return $slim->router->routes;
+        }
+    }
+    
+    class ParamNames extends \Slim\Route {
+        public static function getParamNames($index){
+            return $index->paramNames;
+        }
+    }
+    
+    $routes = RouteDumper::getAllRoutes();
+    $array = Array();
+    for($i = 0; $i < count($routes); $i++){
+
+        $element = Array("pattern"=>$routes[$i]->getPattern(),
+                        "params"=>ParamNames::getParamNames($routes[$i]),
+                        "name"=>$routes[$i]->getName(),
+                        "callable"=>$routes[$i]->getCallable(),
+                        "middleware"=>$routes[$i]->getMiddleware(),
+                        "methods"=>$routes[$i]->getHttpMethods());
+        array_push($array,$element);
+    }
+    echo json_encode($array);
+});
+
 $app->post('/login', function() use ($app, $player) {
-    $postData = json_decode($app->request->getBody(), true);
+    $header = $app->request->headers->get('login');
+    $decoded = base64_decode($header);
+    $authArray = explode(":",$decoded);
 
     // Validate POST variables
-    if ($postData['email_address'] === NULL || $postData['password'] === NULL) {
+    if ($authArray[0] === NULL || $authArray[1] === NULL) {
         echo "Invalid email/password";
     } else {
         
-        $login = $player->login($postData['email_address'], $postData['password']);
+        $login = $player->login($authArray[0], $authArray[1]);
         
         if ($login) {
             $key = "yourMom1969";
             $token = array(
                 'username'=>$app->request->post('email_address'),
                 'issued'=> time(),
-                'expires'=> time() + 60
+                'expires'=> time() + 600
             );
             $jwt = JWT::encode($token, $key);
 
             //now put the encoded token into another public json object
             $pubToken = array(
                 'username'=>$app->request->post('email_address'),
-                'token'=>$jwt
+                'token'=>$jwt,
+                'player_id'=>$login['player_id']
             );
             echo json_encode($pubToken);
 
@@ -93,7 +155,7 @@ $app->post('/login', function() use ($app, $player) {
         }
         
     }
-});
+})->name('Authenticates username and password and returns a json web token')->stuff="junk";
 
 $app->post('/createacct', function() use ($app, $player) {
     $postData = json_decode($app->request->getBody(), true);

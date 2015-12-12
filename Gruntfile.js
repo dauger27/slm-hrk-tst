@@ -8,7 +8,7 @@ module.exports = function(grunt) {
       },
       app: {
         // the files to concatenate
-        src: ['main/**/*.js'],
+        src: ['main/modules/*.js','main/**/*.js'],
         // the location of the resulting JS file
         dest: 'dist/app.js'
       }
@@ -24,8 +24,8 @@ module.exports = function(grunt) {
         }
     },  
     watch: {
-      files: ['<%= concat.app.src %>'],
-      tasks: ['concat']
+      files: ['<%= concat.app.src %>','<%= less.dev.files["dist/app.css"] %>'],
+      tasks: ['concat','less']
     }
   });
     

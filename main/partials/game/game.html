@@ -1,2 +1,5 @@
 <h2>Game</h2>
-<p ng-repeat="player in players">ID:{{player.ID}} Email:{{player.Email}}</p>
+<div>{{players}}</div>
+<div ng-bind-html="error"></div>
+<input type="text" ng-model="name" >
+<button class="btn-info" ng-click="createGame()">Create game</button>
