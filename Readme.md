@@ -10,8 +10,16 @@ You can get download Nodejs [here](https://nodejs.org/en/download/).
 
 once installed, you will be able to access NPM (Node Package Manger) from your terminal/command line.
 
-#### Step 2: Install Grunt and the dev tools 
-Now that you have NPM installed, navigate to your repo in the command line then run the command `npm install`. This will create a folder called node_modules that contain all of your dev tools. You're ready to write.
+#### Step 2: Install Grunt CLI
+Install the Grunt CLI by running `npm install -g grunt-cli`
+
+#### Step 3: Install Grunt Modules
+Now that you have NPM installed, navigate to your repo in the command line then run the command `npm install`. This will create a folder called node_modules that contain all of your dev tools.
+
+#### Step 4: Install Bower components
+Install bower by running `npm intall bower`.
+
+Once bower is installed run `bower install` to install the front end dependencies. 
 
 ### Using the Dev tools
 The app uses concatenated javascript and compiled CSS. This allows us to separate the javascript, css and html templates into sensible components. The dev tools concatenate all of js files in /main and compiles the less files in /main into css. The resulting files are put in the dist folder for use in the app. The app will only used these compiled files, so any changes made to these files must be compiled. 
