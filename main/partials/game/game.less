@@ -3,4 +3,30 @@
     a{
         color:aqua;
     }
+    board{
+        margin-left:auto;
+        margin-right:auto;
+    }
+    .slide{
+        display: inline-block;
+        border: 2px solid black;
+        height: 200px;
+        width: 150px;
+        margin-left:auto;
+        margin-right:auto;
+        position: relative;
+        
+        .color-bar{
+            height: 50px;
+        }
+        
+        .title{
+            position:absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 0);
+            font-size:80%;
+            text-align: center;
+        }
+    }
 }

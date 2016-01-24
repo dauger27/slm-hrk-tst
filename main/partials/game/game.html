@@ -1,5 +1,15 @@
-<h2>Game</h2>
-<div>{{players}}</div>
-<div ng-bind-html="error"></div>
-<input type="text" ng-model="name" >
-<button class="btn-info" ng-click="createGame()">Create game</button>
+<div class="game">
+    <h2>Game</h2>
+    <div class="row">
+        <div class="col-lg-6">
+            <board size="400"></board>
+        </div>
+        <div class="col-lg-6">
+            <div class="slide" ng-repeat="property in slides | orderBy:'-'">
+                <div class="color-bar" style="background-color:{{property.color}}"></div>
+                <p class="title">{{property.name}}</p>
+            </div>
+        </div>
+    </div>
+    
+</div>

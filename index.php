@@ -57,6 +57,15 @@ $app->group('/api/v1', $authenticate, function () use ($app, $player, $game) {
     })->via('GET', 'POST');
     
     $app->get('/getgame/:id', function () use ($app, $game) {
+        //serve up mock data for game
+        $board = file_get_contents("./monopolyData.json");
+        $mockData = Array(
+            "title"=>"Mock Game",
+            "balance"=>524,
+            "board"=>json_decode($board)
+        );
+        
+        echo json_encode($mockData);
 
     })->name("get the current state of a game by id");
     
@@ -138,7 +147,7 @@ $app->post('/login', function() use ($app, $player) {
             $token = array(
                 'username'=>$app->request->post('email_address'),
                 'issued'=> time(),
-                'expires'=> time() + 600
+                'expires'=> time() + 6000
             );
             $jwt = JWT::encode($token, $key);
 
