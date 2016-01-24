@@ -32,6 +32,7 @@
                                 .attr("width", size)
                                 .attr("height", size)
                                 .append("g")
+                                .attr("transform","translate("+size+","+size+") rotate(180)")
                                 .selectAll("g")
                                 .data(board)
                                 .enter()
@@ -115,14 +116,19 @@
                     
                     function getContents(d,i){
                         var group = d3.select(document.createElementNS(d3.ns.prefix.svg, 'g'));
+                        if(d.color){
+                            group.append("rect")
+                                .attr("width", cellWidth)
+                                .attr("height", cellHeight * .25)
+                                .attr("x", 0)
+                                .attr("y", cellHeight * .75)
+                                .attr("fill", d.color)
+                                ;
+                        }
                         
-                        group.append("rect")
-                            .attr("width", cellWidth)
-                            .attr("height", cellHeight * .25)
-                            .attr("x", 0)
-                            .attr("y", cellHeight * .75)
-                            .attr("fill", d.color)
-                            ;
+                        if(d.icon){
+                            group.append("use");
+                        }
                         return group.node();
                     }
                     
