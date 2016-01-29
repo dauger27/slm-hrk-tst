@@ -28,6 +28,7 @@
     "angular": "~1.4.7",
     "bootstrap": "~3.3.5",
     "angular-utf8-base64": "~0.0.5",
-    "ngD3": "*"
+    "ngD3": "*",
+    "font-awesome": "fontawesome#~4.5.0"
   }
 }

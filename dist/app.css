@@ -12,6 +12,12 @@
   margin-left: auto;
   margin-right: auto;
 }
+.game board .board-house {
+  fill: green;
+}
+.game board .hotel {
+  fill: red;
+}
 .game .slide {
   display: inline-block;
   border: 2px solid black;
@@ -23,6 +29,25 @@
 }
 .game .slide .color-bar {
   height: 50px;
+  border-bottom: 2px solid black;
+  padding: 5px;
+}
+.game .slide .color-bar .house {
+  float: left;
+  width: 20px;
+  height: 20px;
+  background-color: green;
+  border: 1px solid black;
+  margin: 5px;
+}
+.game .slide .color-bar .hotel {
+  float: left;
+  width: 40px;
+  height: 20px;
+  background-color: red;
+  border: 1px solid black;
+  margin-left: auto;
+  margin-right: auto;
 }
 .game .slide .title {
   position: absolute;
@@ -31,6 +56,26 @@
   transform: translate(-50%, 0);
   font-size: 80%;
   text-align: center;
+}
+.game .space {
+  stroke-width: .5;
+}
+.game .space .color-bar {
+  stroke: black;
+  stroke-width: .5px;
+}
+.game .space .main-space {
+  fill: #FFFFFF;
+  stroke: black;
+}
+.game .space.selected > .main-space {
+  fill: #EEEEEE;
+}
+.game .right-slide {
+  display: inline-block;
+}
+.game .left-slide {
+  display: inline-block;
 }
 
 .login a {

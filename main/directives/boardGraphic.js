@@ -42,23 +42,30 @@
                                 .data(function(d,i){return d;})
                                 .enter()
                                 .append("g")
-                                .on("click",function(d,i){console.log(d); scope.setSlides(d.index);})
+                                .classed("space", true)
+                                .on("click",clicked)
                                 .attr("transform",getCellPos)
+                                ;
                                 
                                 //add base space
                     board.append("rect")
                                 .attr("height", cellHeight)
                                 .attr("width", getWidth)
                                 .attr("x",0)
-                                .attr("y", 0)
-                                .attr("fill","white")
-                                .attr("stroke", "black")
+                                .attr("y",0)
+                                .classed("main-space",true)
                                 ;
                     
                                 //add other space contents
                     board.append(getContents)
                                 ;
             
+                    
+                    function clicked(d,i){ 
+                        d3.select(".selected").classed("selected",false); 
+                        d3.select(this).classed("selected",true);
+                        scope.setSlides(d.index);
+                    };
                     
                     function getWidth(d,i){
                         if(i === 0){
@@ -123,25 +130,42 @@
                                 .attr("x", 0)
                                 .attr("y", cellHeight * .75)
                                 .attr("fill", d.color)
+                                .classed("color-bar", true)
                                 ;
                         }
                         
                         if(d.icon){
                             group.append("use");
                         }
+                        
+                        if(d.houseArray && !d.hotel){
+                            group.selectAll(".board-house")
+                                .data(d.houseArray)
+                                .enter()
+                                .append("rect")
+                                .attr("height",5)
+                                .attr("width",5)
+                                .attr("y", cellHeight * .875)
+                                .attr("x", function(d,j){return 2 + 6 * j;})
+                                ;
+                        }
+                        
+                        if(d.hotel){
+                            group.append("rect")
+                                .classed("hotel",true)
+                                .attr("height",5)
+                                .attr("width",15)
+                                .attr("y", cellHeight * .875)
+                                .attr("x", cellWidth / 2 - 7.5)
+                                ;
+                        }
+                        
                         return group.node();
-                    }
-                    
+                    } 
                 }
-            }, true);
-            
-            
-            
-            
-            
-            
-            
-            
+                
+            }, true);      
         }
-    } 
- }]);
+    }
+ }]); 
+ 

@@ -6,9 +6,13 @@ angular.module("main",['ngRoute','ngSanitize','ab-base64', 'ngD3']).config(['$ro
         templateUrl: 'main/partials/login/login.html',
         controller: 'LoginCtrl'
       }).
-      when('/playerDash/:gameId/:playerId', {
+      when('/playerDash/:gameId', {
         templateUrl: 'main/partials/game/game.html',
         controller: 'GameCtrl'
+      }).
+      when('/games', {
+        templateUrl: 'main/partials/playerDash/playerDash.html',
+        controller: 'DashCtrl'
       }).
       when('/apiDocs', {
         templateUrl: 'main/partials/apiDocs/api.html',
@@ -18,6 +22,96 @@ angular.module("main",['ngRoute','ngSanitize','ab-base64', 'ngD3']).config(['$ro
         redirectTo: '/login'
       });
   }]);
+/*
+ * A service the wraps url calls in a way that makes the easier to work with
+ */
+
+angular.module("main").factory("apiService",["$http","authService",function($http,authService){
+    var urlBase = "/api/v1/";
+    
+    var makeUrl = function(fragment,arguments){
+       var variable = "";
+       if(arguments && typeof arguments === "object"){
+           for(prop in arguments){
+               variable = ":" + prop;
+               fragment = fragment.replace(variable,arguments[prop]);
+           }
+       }
+
+       return fragment;
+    };
+    
+    return {
+        setAPIbase:function(url){
+           urlBase = "/api/v1/";
+        },
+        constructURL: function(fragment,arguments){
+           
+           return makeUrl(fragment,arguments);
+        },
+        get: function(url,arguments,authenticate){
+            
+            var finishedUrl = makeUrl(url,arguments);
+            if(authenticate){
+                return $http.get(finishedUrl, {headers:authService.getAuthHeader()});
+            }
+            else{
+                return $http.get(finishedUrl);
+            }
+            
+        },
+        post: function(url,arguments,data,authenticate){
+            
+            var finishedUrl = url(url,arguments);
+            if(authenticate){
+                return $http.post(finishedUrl,data, {headers:authService.getAuthHeader()});
+            }
+            else{
+                return $http.post(finishedUrl);
+            }
+            
+        }
+    } 
+}]);
+angular.module("main").factory('authService',["$interval", "$location","$rootScope", function($interval,$location,$rootScope) {
+    
+    //check if token is good on route change.
+    $rootScope.$on('$locationChangeStart', function(event) {
+        if($location.path() !== '/login'){
+            if (!localStorage.authToken || localStorage.authObjectExpires && localStorage.authObjectExpires > new Date().getTime()) {
+               console.log("the token either does not exist are is expired, please login");
+               localStorage.removeItem("authToken");
+               localStorage.removeItem("authTokenExpires");
+               $location.path('/login');
+            }
+        }
+    });
+    
+    //interface object
+    var authService = {
+      startAuthCheck: function(authToken){
+        localStorage.setItem("authToken", JSON.stringify(authToken));
+        localStorage.setItem("authTokenExpires", authToken.expires);
+          
+        var checker = $interval(function(){
+            if(localStorage.authObjectExpires > new Date().getTime() ){
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("authTokenExpires");
+                $location.path('/login');
+                console.log(checker.cancel());
+            }
+        },5000);
+      },
+      getToken: function(){
+          return localStorage.authToken;
+      },
+      getAuthHeader: function(){
+          return {"x-auth-token":localStorage.authToken}
+      }
+  };
+  
+  return authService;
+}]);
 
  angular.module("main").directive("board",['$d3', function($d3){
     return{
@@ -63,23 +157,30 @@ angular.module("main",['ngRoute','ngSanitize','ab-base64', 'ngD3']).config(['$ro
                                 .data(function(d,i){return d;})
                                 .enter()
                                 .append("g")
-                                .on("click",function(d,i){console.log(d); scope.setSlides(d.index);})
+                                .classed("space", true)
+                                .on("click",clicked)
                                 .attr("transform",getCellPos)
+                                ;
                                 
                                 //add base space
                     board.append("rect")
                                 .attr("height", cellHeight)
                                 .attr("width", getWidth)
                                 .attr("x",0)
-                                .attr("y", 0)
-                                .attr("fill","white")
-                                .attr("stroke", "black")
+                                .attr("y",0)
+                                .classed("main-space",true)
                                 ;
                     
                                 //add other space contents
                     board.append(getContents)
                                 ;
             
+                    
+                    function clicked(d,i){ 
+                        d3.select(".selected").classed("selected",false); 
+                        d3.select(this).classed("selected",true);
+                        scope.setSlides(d.index);
+                    };
                     
                     function getWidth(d,i){
                         if(i === 0){
@@ -144,28 +245,45 @@ angular.module("main",['ngRoute','ngSanitize','ab-base64', 'ngD3']).config(['$ro
                                 .attr("x", 0)
                                 .attr("y", cellHeight * .75)
                                 .attr("fill", d.color)
+                                .classed("color-bar", true)
                                 ;
                         }
                         
                         if(d.icon){
                             group.append("use");
                         }
+                        
+                        if(d.houseArray && !d.hotel){
+                            group.selectAll(".board-house")
+                                .data(d.houseArray)
+                                .enter()
+                                .append("rect")
+                                .attr("height",5)
+                                .attr("width",5)
+                                .attr("y", cellHeight * .875)
+                                .attr("x", function(d,j){return 2 + 6 * j;})
+                                ;
+                        }
+                        
+                        if(d.hotel){
+                            group.append("rect")
+                                .classed("hotel",true)
+                                .attr("height",5)
+                                .attr("width",15)
+                                .attr("y", cellHeight * .875)
+                                .attr("x", cellWidth / 2 - 7.5)
+                                ;
+                        }
+                        
                         return group.node();
-                    }
-                    
+                    } 
                 }
-            }, true);
-            
-            
-            
-            
-            
-            
-            
-            
+                
+            }, true);      
         }
-    } 
- }]);
+    }
+ }]); 
+ 
 angular.module("main").directive('scrollOnClick', function() {
   return {
     restrict: 'A',
@@ -195,50 +313,51 @@ angular.module("main").controller("apiCtrl", ["$scope","$http","$sce","$sanitize
         $scope.data = $sce.trustAsHtml(error.data); 
     });
 }]);
-angular.module("main").controller("GameCtrl", ["$scope","$location","$http","$sce","$sanitize",function($scope,$location,$http,$sce,$sanitize){
-    if(!localStorage.authToken){
-        console.log("No Auth");
-        $location.path('/login')
-    }
-    var authToken = localStorage.getItem("authToken");
+angular.module("main").controller("GameCtrl", ["$scope","$location","$http","$sce","$sanitize","$timeout","authService","apiService","$routeParams",function($scope,$location,$http,$sce,$sanitize,$timeout,authService,apiService,$routeParams){
         
-    //Here is an example of an http request that hits an API endpoint...
-    $http.get("/api/v1/getgame/3",{headers:{"x-auth-token":authToken}}).then(function(data){
+    //Get game data
+    apiService.get("/api/v1/getgame/:id",{id:$routeParams.gameId},true).then(function(data){
         $scope.players = data.data;
-        $scope.players.board.forEach(function(element,i){element.index = i;})
+        $scope.players.board.forEach(function(element,i){
+            element.index = i;
+            if(element.color){
+                element.houses = Math.round(Math.random() * 4);
+                element.hotel = Math.random() > .75 ? true : false;
+            }
+            element.houseArray = $scope.numToArr(element.houses, element);
+        });
         $scope.slides = $scope.players.board.slice(0,3);
-        console.log($scope.players.board);
+        //console.log($scope.players.board);
     },function(error){
         console.log(error.data)
         $scope.error = $sce.trustAsHtml(error.data);
     });
     
-    
-    $scope.createGame = function(){
-        //Here is an example of an http request that hits an API endpoint...
-        $http.post("/api/v1/creategame",{name:$scope.name},{headers:{"x-auth-token":authToken}}).then(function(data){
-            console.log(data.data);
-            $scope.players = data.data;
-        },function(error){
-            console.log(error.data)
-            $scope.error = $sce.trustAsHtml(error.data);
-        });
-    };
-    
+    //set slides
     $scope.setSlides = function(index){
+        
         if(index === 0){
             $scope.slides = [$scope.players.board[$scope.players.board.length - 1], $scope.players.board[0], $scope.players.board[1]];
         }
         else if(index === $scope.players.board.length - 1){
-            $scope.slides = [$scope.players.board[$scope.players.board.length - 2], $scope.players.board[players.board.length - 1], $scope.players.board[0]];
+            $scope.slides = [$scope.players.board[$scope.players.board.length - 2], $scope.players.board[$scope.players.board.length - 1], $scope.players.board[0]];
         }
         else{
             $scope.slides = $scope.players.board.slice(index - 1,index + 2);
         }
         $scope.$apply();
+    };
+    
+    //populate house array for data binding
+    $scope.numToArr = function(num,element){
+        var array = [];
+        for(var i=0; i<num; i++){
+            array.push({index:i,name:element.name + " " + (i + 1)});
+        }
+        return array;
     }
 }]);
-angular.module("main").controller("LoginCtrl", ["$scope","$http","$sce","$sanitize","base64",function($scope,$http,$sce,$sanitize,base64){
+angular.module("main").controller("LoginCtrl", ["$scope","$http","$sce","$sanitize","base64","$location","authService",function($scope,$http,$sce,$sanitize,base64,$location,authService){
     $scope.userName = "";
     $scope.password = "";
     $scope.jsonData = "";
@@ -247,8 +366,11 @@ angular.module("main").controller("LoginCtrl", ["$scope","$http","$sce","$saniti
         $http.post("/login",null,{headers:{"login":base64.encode($scope.userName+":"+$scope.password)}}).then(function(data){//todo start here
             
             //get the token and put it in local sotrage
-            localStorage.setItem("authToken", JSON.stringify(data.data));
-            $scope.jsonData = data.data;
+            authService.startAuthCheck(data.data);
+            
+            //redirect to the player Dash
+            $location.path('/games');
+            
         },function(error){
            console.log(error); 
         });
@@ -269,23 +391,32 @@ angular.module("main").controller("LoginCtrl", ["$scope","$http","$sce","$saniti
             $scope.data = "Passwords don't match";
         }
     }
+}]);
+angular.module("main").controller("DashCtrl", ["$scope","$location","apiService",function($scope,$location,apiService){
     
-    $scope.testAuth = function(){
-        var authToken = localStorage.getItem("authToken"); //get Auth token
-        
-        $http.get("/api/v1/players",{headers:{"x-auth-token":authToken}}).then(function(data){
-            console.log(data.data);
-            $scope.jsonData = data.data;
+    //get the games
+    apiService.get("/api/v1/getgames",null,true).then(function(data){
+        $scope.yourGames = data.data;
+    },function(error){
+        console.log(error);
+    });
+    
+    apiService.get("/api/v1/getallgames",null,true).then(function(data){
+        $scope.allGames = data.data;
+        console.log(data.data);
+    },function(error){
+        console.log(error);
+    });
+    
+    $scope.createGame = function(){
+        apiService.post("/api/v1/getallgames",null,true).then(function(data){
+            $scope.allGames = data.data;
         },function(error){
-            console.log(error.data)
-            $scope.data = $sce.trustAsHtml(error.data); 
+            console.log(error);
         });
     }
-}]);
-angular.module("main").controller("DashCtrl", ["$scope","$location",function($scope,$location){
     
-    if(!localStorage.auth){
-        console.log("no Auth");
-        $location.path('/login');
-    }
+    
+    
 }]);
+//# sourceMappingURL=app.js.map
