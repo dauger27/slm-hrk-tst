@@ -3,4 +3,82 @@
     a{
         color:aqua;
     }
+    board{
+        margin-left:auto;
+        margin-right:auto;
+        
+        .board-house{
+            fill:green;
+        }
+        
+        .hotel{
+            fill:red;
+        }
+    }
+    .slide{
+        display: inline-block;
+        border: 2px solid black;
+        height: 200px;
+        width: 150px;
+        margin-left:auto;
+        margin-right:auto;
+        position: relative;
+        
+        .color-bar{
+            height: 50px;
+            border-bottom:2px solid black;
+            padding: 5px;
+            
+            .house{
+                float:left;
+                width:20px;
+                height: 20px;
+                background-color: green;
+                border: 1px solid black;
+                margin: 5px;
+            }
+            .hotel{
+                float:left;
+                width:40px;
+                height: 20px;
+                background-color: red;
+                border: 1px solid black;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+        
+        .title{
+            position:absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 0);
+            font-size:80%;
+            text-align: center;
+        }
+    }
+    .space{
+        stroke-width: .5;
+        
+        .color-bar{
+            stroke:black;
+            stroke-width:.5px;
+        }
+        
+        .main-space{
+            fill: #FFFFFF;
+            stroke:black;
+        }
+        
+        &.selected > .main-space{
+            fill:#EEEEEE;
+        } 
+    }
+    
+    .right-slide{
+        display: inline-block;
+    }
+    .left-slide{
+        display: inline-block;
+    }
 }

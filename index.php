@@ -57,15 +57,33 @@ $app->group('/api/v1', $authenticate, function () use ($app, $player, $game) {
     })->via('GET', 'POST');
     
     $app->get('/getgame/:id', function () use ($app, $game) {
+        //serve up mock data for game
+        $board = file_get_contents("./monopolyData.json");
+        $mockData = Array(
+            "title"=>"Mock Game",
+            "turn"=>10,
+            "balance"=>524,
+            "currentPlayerTurn"=>"Stuart",
+            "board"=>json_decode($board)
+        );
+        
+        echo json_encode($mockData);
 
     })->name("get the current state of a game by id");
     
     $app->get('/getgames', function () use ($app, $game) {
         $header = json_decode($app->request->headers->get('x-auth-token'));
         
+        $games = $game->get_games(intval($header->player_id));
+        echo json_encode($games);
+    })->name("get all games by a particular player");
+    
+    $app->get('/getallgames', function () use ($app, $game) {
+        $header = json_decode($app->request->headers->get('x-auth-token'));
+        
         $games = $game->get_all_games();
         echo json_encode($games);
-    })->name("get the current state of a game by id");
+    })->name("get all games available");
     
     $app->post('/creategame', function() use ($app, $game) {
         $postData = json_decode($app->request->getBody(), true);
@@ -135,10 +153,11 @@ $app->post('/login', function() use ($app, $player) {
         
         if ($login) {
             $key = "yourMom1969";
+            $time = time() + 6000;
             $token = array(
                 'username'=>$app->request->post('email_address'),
                 'issued'=> time(),
-                'expires'=> time() + 600
+                'expires'=> $time
             );
             $jwt = JWT::encode($token, $key);
 
@@ -146,7 +165,8 @@ $app->post('/login', function() use ($app, $player) {
             $pubToken = array(
                 'username'=>$app->request->post('email_address'),
                 'token'=>$jwt,
-                'player_id'=>$login['player_id']
+                'player_id'=>$login['player_id'],
+                'expires'=>$time
             );
             echo json_encode($pubToken);
 
