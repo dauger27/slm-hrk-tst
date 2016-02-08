@@ -5,9 +5,12 @@
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
+
 Vagrant.configure(2) do |config|
-    
-    config.vm.box = "hashicorp/precise64"
+    config.vm.box = "ubuntu/trusty64"
+    config.vm.provider "virtualbox" do |v|
+        v.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"]
+    end
     config.vm.provision :shell, path: "bootstrap.sh"
     config.vm.network :forwarded_port, guest: 80, host: 4567
 end
