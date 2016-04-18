@@ -9,6 +9,10 @@ angular.module("main",['ngRoute','ngSanitize','ab-base64', 'ngD3']).config(['$ro
         templateUrl: 'main/partials/login/login.html',
         controller: 'LoginCtrl'
       }).
+      when('/editProfile', {
+        templateUrl: 'main/partials/editProfile/editProfile.html',
+        controller: 'editProfileCtrl'
+      }).
       when('/playerDash/:gameId', {
         name: "bypass",
         include: false,

@@ -34,9 +34,26 @@ class Player {
 	    $this->error = $e->getMessage();
 	    return FALSE;
 	}
+        
+    return $result;
+    } // get_players
+
+        
+    // Return a single player
+    public function get_player($player) {
+	try {
+	    $result = $this->db->query("SELECT email_address, username FROM player WHERE player_id=?", $player);
+	    if (count($result) == 0) {
+		$this->error = 'No players exist';
+		return FALSE;
+	    }
+	} catch (DBException $e) {
+	    $this->error = $e->getMessage();
+	    return FALSE;
+	}
 
 	return $result;
-    } // get_players
+    } // get_player
 
     // Authentication method
     public function login($email_address, $password) {
