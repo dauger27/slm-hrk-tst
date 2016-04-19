@@ -10,7 +10,9 @@ angular.module("main",['ngRoute','ngSanitize','ab-base64', 'ngD3']).config(['$ro
         controller: 'LoginCtrl'
       }).
       when('/editProfile', {
+        name:"Edit Profile",
         templateUrl: 'main/partials/editProfile/editProfile.html',
+        include:true,
         controller: 'editProfileCtrl'
       }).
       when('/playerDash/:gameId', {
@@ -42,7 +44,7 @@ angular.module("main",['ngRoute','ngSanitize','ab-base64', 'ngD3']).config(['$ro
 
 angular.module("main").factory("apiService",["$http","authService",function($http,authService){
     var urlBase = "/api/v1/";
-
+    
     var makeUrl = function(fragment,arguments){
        var variable = "";
        if(arguments && typeof arguments === "object"){
@@ -54,17 +56,17 @@ angular.module("main").factory("apiService",["$http","authService",function($htt
 
        return fragment;
     };
-
+    
     return {
         setAPIbase:function(url){
            urlBase = "/api/v1/";
         },
         constructURL: function(fragment,arguments){
-
+           
            return makeUrl(fragment,arguments);
         },
         get: function(url,arguments,authenticate){
-
+            
             var finishedUrl = makeUrl(url,arguments);
             if(authenticate){
                 return $http.get(finishedUrl, {headers:authService.getAuthHeader()});
@@ -72,10 +74,10 @@ angular.module("main").factory("apiService",["$http","authService",function($htt
             else{
                 return $http.get(finishedUrl);
             }
-
+            
         },
         post: function(url,arguments,data,authenticate){
-
+            
             var finishedUrl = url(url,arguments);
             if(authenticate){
                 return $http.post(finishedUrl,data, {headers:authService.getAuthHeader()});
@@ -83,12 +85,12 @@ angular.module("main").factory("apiService",["$http","authService",function($htt
             else{
                 return $http.post(finishedUrl);
             }
-
+            
         }
-    }
+    } 
 }]);
 angular.module("main").factory('authService',["$interval", "$location","$rootScope", function($interval,$location,$rootScope) {
-
+    
     //check if token is good on route change.
     $rootScope.$on('$locationChangeStart', function(event) {
         if($location.path() !== '/login'){
@@ -100,13 +102,13 @@ angular.module("main").factory('authService',["$interval", "$location","$rootSco
             }
         }
     });
-
+    
     //interface object
     var authService = {
       startAuthCheck: function(authToken){
         localStorage.setItem("authToken", JSON.stringify(authToken));
         localStorage.setItem("authTokenExpires", authToken.expires);
-
+          
         var checker = $interval(function(){
             if(localStorage.authObjectExpires > new Date().getTime() ){
                 localStorage.removeItem("authToken");
@@ -123,7 +125,7 @@ angular.module("main").factory('authService',["$interval", "$location","$rootSco
           return {"x-auth-token":localStorage.authToken}
       }
   };
-
+  
   return authService;
 }]);
 
@@ -148,10 +150,12 @@ angular.module("main").factory('authService',["$interval", "$location","$rootSco
                     var side = players.board.length / 4;
                     var board = [];
 
-           var size = attrs.size || $(element).parent().innerWidth();
-           var cellWidth = size / 13;
-           var cellHeight = cellWidth * 2;
-
+                    for(var i=0; i<4; i++){
+                        board.push([]);
+                        for(var j=side*i; j<side*(i+1);j++){
+                            board[i].push(players.board[j]);
+                        }
+                    }
 
                     //remove previous svg and append new append svg
                     var board = d3.select(element[0])
@@ -296,6 +300,28 @@ angular.module("main").factory('authService',["$interval", "$location","$rootSco
     }
  }]);
 
+angular.module("main").directive("menuBar",['$route', function($route){
+  return {
+    restrict:"E",
+    scope:"=", //Consider inheriting from parent
+    templateUrl:'/main/directives/menuBar.html',
+    link: function(scope, element, attrs) {
+      console.log($route.routes);
+      scope.menuItems = [];
+      angular.forEach($route.routes, function(value, key){
+        console.log(key, value);
+        scope.menuItems.push(value);
+      });
+    }
+  }
+}]);
+/*
+TODO: Check to see if player has games and add link to any games he has,
+this will entail creating a controller for the directive which makes
+an authentication call to see if there is a player and if they any games.
+If they have games, these games to a dropdown
+*/
+
 angular.module("main").directive('scrollOnClick', function() {
   return {
     restrict: 'A',
@@ -316,26 +342,26 @@ angular.module("main").directive('scrollOnClick', function() {
 });
 angular.module("main").controller("apiCtrl", ["$scope","$http","$sce","$sanitize",function($scope,$http,$sce,$sanitize){
     $scope.api = {};
-
+    
     $http.get("/apiDocs").then(function(data){
         console.log(data.data);
         $scope.api = data.data;
     },function(error){
         console.log(error.data)
-        $scope.data = $sce.trustAsHtml(error.data);
+        $scope.data = $sce.trustAsHtml(error.data); 
     });
 }]);
 angular.module('main').controller("editProfileCtrl", ["$scope","apiService","authService",function($scope,apiService,authService){
     var playerId = angular.fromJson(authService.getToken()).id;
-
+    
     apiService.get()
-
+    
     $scope.changeProfile = function(){
-
+        
     };
 }]);
 angular.module("main").controller("GameCtrl", ["$scope","$location","$http","$sce","$sanitize","$timeout","authService","apiService","$routeParams",function($scope,$location,$http,$sce,$sanitize,$timeout,authService,apiService,$routeParams){
-
+        
     //Get game data
     apiService.get("/api/v1/getgame/:id",{id:$routeParams.gameId},true).then(function(data){
         $scope.players = data.data;
@@ -353,10 +379,10 @@ angular.module("main").controller("GameCtrl", ["$scope","$location","$http","$sc
         console.log(error.data)
         $scope.error = $sce.trustAsHtml(error.data);
     });
-
+    
     //set slides
     $scope.setSlides = function(index){
-
+        
         if(index === 0){
             $scope.slides = [$scope.players.board[$scope.players.board.length - 1], $scope.players.board[0], $scope.players.board[1]];
         }
@@ -368,7 +394,7 @@ angular.module("main").controller("GameCtrl", ["$scope","$location","$http","$sc
         }
         $scope.$apply();
     };
-
+    
     //populate house array for data binding
     $scope.numToArr = function(num,element){
         var array = [];
@@ -382,21 +408,21 @@ angular.module("main").controller("LoginCtrl", ["$scope","$http","$sce","$saniti
     $scope.userName = "";
     $scope.password = "";
     $scope.jsonData = "";
-
+    
     $scope.setAuth = function(val){
         $http.post("/login",null,{headers:{"login":base64.encode($scope.userName+":"+$scope.password)}}).then(function(data){//todo start here
-
+            
             //get the token and put it in local sotrage
             authService.startAuthCheck(data.data);
-
+            
             //redirect to the player Dash
             $location.path('/games');
-
+            
         },function(error){
-           console.log(error);
+           console.log(error); 
         });
     }
-
+    
     $scope.createAcct = function(val){
         if($scope.newPassword === $scope.repeatNewPassword){
             $http.post("/createacct",{"email_address":$scope.newEmailAddress,
@@ -414,21 +440,21 @@ angular.module("main").controller("LoginCtrl", ["$scope","$http","$sce","$saniti
     }
 }]);
 angular.module("main").controller("DashCtrl", ["$scope","$location","apiService",function($scope,$location,apiService){
-
+    
     //get the games
     apiService.get("/api/v1/getgames",null,true).then(function(data){
         $scope.yourGames = data.data;
     },function(error){
         console.log(error);
     });
-
+    
     apiService.get("/api/v1/getallgames",null,true).then(function(data){
         $scope.allGames = data.data;
         console.log(data.data);
     },function(error){
         console.log(error);
     });
-
+    
     $scope.createGame = function(){
         apiService.post("/api/v1/getallgames",null,true).then(function(data){
             $scope.allGames = data.data;
@@ -436,8 +462,8 @@ angular.module("main").controller("DashCtrl", ["$scope","$location","apiService"
             console.log(error);
         });
     }
-
-
-
+    
+    
+    
 }]);
 //# sourceMappingURL=app.js.map

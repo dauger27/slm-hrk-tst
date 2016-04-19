@@ -10,7 +10,9 @@ angular.module("main",['ngRoute','ngSanitize','ab-base64', 'ngD3']).config(['$ro
         controller: 'LoginCtrl'
       }).
       when('/editProfile', {
+        name:"Edit Profile",
         templateUrl: 'main/partials/editProfile/editProfile.html',
+        include:true,
         controller: 'editProfileCtrl'
       }).
       when('/playerDash/:gameId', {
