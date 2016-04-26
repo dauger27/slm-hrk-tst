@@ -6,11 +6,11 @@
     board{
         margin-left:auto;
         margin-right:auto;
-        
+
         .board-house{
-            fill:green;
+            fill:#003300;
         }
-        
+
         .hotel{
             fill:red;
         }
@@ -23,18 +23,17 @@
         margin-left:auto;
         margin-right:auto;
         position: relative;
-        
+
         .color-bar{
             height: 50px;
             border-bottom:2px solid black;
             padding: 5px;
-            
+
             .house{
                 float:left;
                 width:20px;
                 height: 20px;
                 background-color: green;
-                border: 1px solid black;
                 margin: 5px;
             }
             .hotel{
@@ -47,7 +46,7 @@
                 margin-right: auto;
             }
         }
-        
+
         .title{
             position:absolute;
             bottom: 0;
@@ -56,25 +55,38 @@
             font-size:80%;
             text-align: center;
         }
+        .icon{
+            position:absolute;
+            font-family:FontAwesome,sans-serif;;
+            bottom: 50%;
+            left: 50%;
+            transform: translate(-50%, 0);
+            font-size:300%;
+            text-align: center;
+        }
     }
     .space{
         stroke-width: .5;
-        
+
         .color-bar{
             stroke:black;
             stroke-width:.5px;
         }
-        
+
         .main-space{
             fill: #FFFFFF;
             stroke:black;
         }
-        
+
+        .icon{
+            font-family: FontAwesome;
+        }
+
         &.selected > .main-space{
             fill:#EEEEEE;
-        } 
+        }
     }
-    
+
     .right-slide{
         display: inline-block;
     }

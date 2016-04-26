@@ -56,6 +56,15 @@ $app->group('/api/v1', $authenticate, function () use ($app, $player, $game) {
         }
     })->via('GET', 'POST');
     
+    $app->map('/getPlayers', function() use ($player) {
+        $players = $player->get_players();
+        if ($players) {
+            echo json_encode($players);
+        } else {
+            echo $player->last_error();
+        }
+    })->via('GET', 'POST');
+    
     $app->get('/getgame/:id', function () use ($app, $game) {
         //serve up mock data for game
         $board = file_get_contents("./monopolyData.json");

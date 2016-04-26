@@ -4,12 +4,15 @@
   "description": "an implementation of Evilopoly rules with php and angularjs",
   "main": "Gruntfile.js",
   "dependencies": {
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
     "grunt-contrib-concat": "^0.5.1",
     "grunt": "^0.4.5",
+    "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-less": "^1.0.1",
     "grunt-contrib-watch": "^0.6.1"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
