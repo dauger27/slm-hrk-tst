@@ -14,7 +14,7 @@
   margin-right: auto;
 }
 .game board .board-house {
-  fill: green;
+  fill: #003300;
 }
 .game board .hotel {
   fill: red;
@@ -38,7 +38,6 @@
   width: 20px;
   height: 20px;
   background-color: green;
-  border: 1px solid black;
   margin: 5px;
 }
 .game .slide .color-bar .hotel {
@@ -58,6 +57,15 @@
   font-size: 80%;
   text-align: center;
 }
+.game .slide .icon {
+  position: absolute;
+  font-family: FontAwesome, sans-serif;
+  bottom: 50%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  font-size: 300%;
+  text-align: center;
+}
 .game .space {
   stroke-width: .5;
 }
@@ -68,6 +76,9 @@
 .game .space .main-space {
   fill: #FFFFFF;
   stroke: black;
+}
+.game .space .icon {
+  font-family: FontAwesome;
 }
 .game .space.selected > .main-space {
   fill: #EEEEEE;

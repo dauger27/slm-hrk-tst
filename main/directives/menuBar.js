@@ -4,10 +4,8 @@ angular.module("main").directive("menuBar",['$route', function($route){
     scope:"=", //Consider inheriting from parent
     templateUrl:'/main/directives/menuBar.html',
     link: function(scope, element, attrs) {
-      console.log($route.routes);
       scope.menuItems = [];
       angular.forEach($route.routes, function(value, key){
-        console.log(key, value);
         scope.menuItems.push(value);
       });
     }

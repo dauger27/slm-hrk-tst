@@ -1,6 +1,7 @@
 [
     {
-        "name":"go"
+        "name":"go",
+        "icon":"\uf0a5"
     },
     {
         "name":"Mediterranean Avenue",
@@ -17,7 +18,9 @@
         "building":50
     },
     {
-        "name":"Community Chest"
+        "name":"Community Chest",
+        "icon":"\uf128",
+        "font":"FontAwesome"
     },
     {
         "name":"Baltic Avenue",
@@ -34,7 +37,9 @@
         "building":50
     },
     {
-        "name":"Income Tax"
+        "name":"Income Tax",
+        "icon":"\uf295",
+        "font":"FontAwesome"
     },
     {
         "name":"Reading Railroad",
@@ -44,7 +49,9 @@
         "stocks":{},
         "valueMod":0,
         "printedPrice":200,
-        "mortgage":100
+        "mortgage":100,
+        "icon":"\uf239",
+        "font":"FontAwesome"
     },
     {
         "name":"Oriental Avenue",
@@ -61,7 +68,9 @@
         "building":50
     },
     {
-        "name":"Chance"
+        "name":"Chance",
+        "icon":"\uf128",
+        "font":"FontAwesome"
     },
     {
         "name":"Vermont Avenue",
@@ -92,7 +101,9 @@
         "building":50
     },
     {
-        "name":"Jail"
+        "name":"Jail",
+        "icon":"\uf19c",
+        "font":"FontAwesome"
     },
     {
         "name":"St. Charles Place",
@@ -116,7 +127,9 @@
         "stocks":{},
         "valueMod":0,
         "printedPrice":150,
-        "mortgage":75
+        "mortgage":75,
+        "icon":"\uf0eb",
+        "font":"FontAwesome"
     },
     {
         "name":"States Avenue",
@@ -154,7 +167,9 @@
         "stocks":{},
         "valueMod":0,
         "printedPrice":200,
-        "mortgage":100
+        "mortgage":100,
+        "icon":"\uf239",
+        "font":"FontAwesome"
     },
     {
         "name":"St. James Place",
@@ -171,7 +186,9 @@
         "building":100
     },
     {
-        "name":"Community Chest"
+        "name":"Community Chest",
+        "icon":"\uf06b",
+        "font":"FontAwesome"
     },
     {
         "name":"Tennessee Avenue",
@@ -202,7 +219,9 @@
         "building":100
     },
     {
-        "name":"Free Parking"
+        "name":"Free Parking",
+        "icon":"\uf1b9",
+        "font":"FontAwesome"
     },
     {
         "name":"Kentucky Avenue",
@@ -219,7 +238,9 @@
         "building":150
     },
     {
-        "name":"Chance"
+        "name":"Chance",
+        "icon":"\uf128",
+        "font":"FontAwesome"
     },
     {
         "name":"Indiana Avenue",
@@ -257,7 +278,9 @@
         "stocks":{},
         "valueMod":0,
         "printedPrice":200,
-        "mortgage":100
+        "mortgage":100,
+        "icon":"\uf239",
+        "font":"FontAwesome"
     },
     {
         "name":"Atlantic Avenue",
@@ -295,7 +318,9 @@
         "stocks":{},
         "valueMod":0,
         "printedPrice":150,
-        "mortgage":75
+        "mortgage":75,
+        "icon":"\uf043",
+        "font":"FontAwesome"
     },
     {
         "name":"Marvin Gardens",
@@ -312,7 +337,8 @@
         "building":150
     },
     {
-        "name":"Go To Jail"
+        "name":"Go To Jail",
+        "icon":"\uf24e"
     },
     {
         "name":"Pacific Avenue",
@@ -343,7 +369,9 @@
         "building":200
     },
     {
-        "name":"Community Chest"
+        "name":"Community Chest",
+        "icon":"\uf06b",
+        "font":"FontAwesome"
     },
     {
         "name":"Pennsylvania Avenue",
@@ -367,10 +395,14 @@
         "stocks":{},
         "valueMod":0,
         "printedPrice":200,
-        "mortgage":100
+        "mortgage":100,
+        "icon":"\uf239",
+        "font":"FontAwesome"
     },
     {
-        "name":"Chance"
+        "name":"Chance",
+        "icon":"\uf128",
+        "font":"FontAwesome"
     },
     {
         "name":"Park Place",
@@ -387,7 +419,9 @@
         "building":200
     },
     {
-        "name":"Luxury Tax"
+        "name":"Luxury Tax",
+        "icon":"\uf219",
+        "font":"FontAwesome"
     },
     {
         "name":"Boardwalk",
